@@ -1,0 +1,41 @@
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+
+# Ignore temporary files and editor specific files
+*.swp
+*.bak
+*~
+
+# Ignore cache files
+.cache/
+.cache*
+
+# Ignore Scrapy project cache files
+.scrapy/
+
+# Ignore downloaded files directory
+new_files/
+
+# Ignore log files
+*.log
+
+# Ignore virtual environments
+venv/
+.env/
+env/
+
+# Ignore specific configuration files (if applicable)
+*.cfg
+
+# Ignore egg files
+*.egg
+*.egg-info/
+
+# Ignore build and distribution directories
+build/
+dist/
+
+# Ignore output of scrapy commands like `scrapy genspider`
+spiders/*.pyc
+spiders/*.egg-info/

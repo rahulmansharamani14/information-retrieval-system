@@ -35,7 +35,7 @@ def searchQuery(query, K, output_file):
         document = df_documents.iloc[idx]['content']
         title = df_documents.iloc[idx]['title']
         docId = str(idx)
-        results.append({ 'score': similarity_score, 'content': document, 'title' : title,  'Id': docId})
+        results.append({ 'score': similarity_score, 'title' : title,  'Id': docId})
 
     return results
 

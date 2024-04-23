@@ -3,6 +3,10 @@ import math
 from sklearn.feature_extraction.text import TfidfVectorizer
 import json
 import pickle
+import pandas as pd
+import parse_html_to_json
+
+parse_html_to_json.main()
 
 def load_corpus(json_file):
     f = open('./' + json_file)
@@ -59,18 +63,34 @@ def to_pickle(index, output_file):
     print('saved index to ', output_file)
 
 
+
+
 def main():
-    json_file = 'output.json'
-    corpus = load_corpus(json_file)
-    N = len(corpus)
-    print(N)
-    index, X = tf_idf_index(corpus)
-    print(index)
+    df = pd.read_json('output.json')
+    df = df['content'].values
+
+    tfidf_vectorizer = TfidfVectorizer()
+    tfidf_matrix = tfidf_vectorizer.fit_transform(df)
+
+    with open('tfidf_index', "wb") as f:
+        pickle.dump((tfidf_vectorizer, tfidf_matrix), f)
+    f.close()
+    print('saved index to ', 'tfidf_index')
+
+
+    # json_file = 'output.json'
+    # corpus = load_corpus(json_file)
+    # N = len(corpus)
+    # print(N)
+    # index, X = tf_idf_index(corpus)
+    # print(index)
     
-    output_file = 'inverted_index.pickle'
-    to_pickle(index, output_file)
-    to_pickle(X, 'tfidf_matrix.pickle')
-    saved_corpus(corpus, 'corpus.txt')
+    # output_file = 'inverted_index.pickle'
+    # to_pickle(index, output_file)
+    # to_pickle(X, 'tfidf_matrix.pickle')
+    # saved_corpus(corpus, 'corpus.txt')
+
+
     # saved_urls(urls, 'urls.txt')
 
 if __name__ == '__main__':

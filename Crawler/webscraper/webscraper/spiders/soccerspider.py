@@ -17,13 +17,6 @@ class SoccerspiderSpider(scrapy.Spider):
         self.n_pages = 0
 
 
-    # le_urls = LinkExtractor(restrict_css='#mw-content-text > div.mw-content-ltr.mw-parser-output > p')
-
-    # rule_urls = Rule(le_urls, callback='parse', follow=True)
-
-    # rules = (
-    #     rule_urls
-    # )
 
     def start_requests(self):
         start_urls = ["https://en.wikipedia.org/wiki/Association_football"]
@@ -43,13 +36,6 @@ class SoccerspiderSpider(scrapy.Spider):
         file_path = Path(f'{dir}/{filename}')
         file_path.write_bytes(response.body)
         self.log(f"----------------------{response.url}----------------------")
-        # yield {
-        #     # "content": "".join(list(filter(lambda x : x != "\n", details.css("div.mw-content-ltr p::text").getall()))),
-        #     "title": response.css("span.mw-page-title-main::text").get(),
-        #     "content": "".join(details.css("p::text").getall()).replace("\n", ""),
-        #     "link": response.url
-        # }
-
         self.n_pages += 1
 
         for link in response.css("div.mw-content-ltr p a::attr(href)").extract()[:10]:

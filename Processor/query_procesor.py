@@ -1,4 +1,4 @@
-import numpy as np
+import pandas as pd
 import nltk
 from collections import defaultdict
 from itertools import groupby
@@ -8,21 +8,37 @@ nltk.download('words')
 from nltk.corpus import words
 correct_words = words.words()
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-def load_index(pickle_file):
-    with open(pickle_file, 'rb') as f:
-        dict = pickle.load(f)
-    return dict
+def load_index(tfidf_index_file):
+    with open(tfidf_index_file, 'rb') as f:
+        tfidf_vectorizer, tfidf_matrix = pickle.load(f)
 
-def load_corpus_file(corpus_file):
-    with open(corpus_file, 'r') as f:
-        lines = f.readlines()
-    return lines
+    return tfidf_vectorizer, tfidf_matrix
+
+
+def searchQuery(query, K, output_file):
     
-def load_urls(url_file):
-    with open(url_file, 'r') as f:
-        lines = f.readlines()
-    return lines
+    tfidf_vectorizer, tfidf_matrix = load_index('../Indexer/tfidf_index')
+
+    df_documents = pd.read_json(output_file)
+
+    query_vector = tfidf_vectorizer.transform([query])
+    query_cosine_similarities = cosine_similarity(query_vector, tfidf_matrix)
+    most_similar_indices = query_cosine_similarities.argsort()[0][::-1]
+
+
+    results = []
+    for idx in most_similar_indices[:K]:
+        similarity_score = query_cosine_similarities[0][idx]
+        document = df_documents.iloc[idx]['content']
+        title = df_documents.iloc[idx]['title']
+        docId = str(idx)
+        results.append({ 'score': similarity_score, 'content': document, 'title' : title,  'Id': docId})
+
+    return results
+
 
 def get_vocab(index):
     return [term for term in index.keys()]
@@ -35,47 +51,4 @@ def spelling_correction(query):
     return corrected_query
 
 
-def modify_query(query, vocab):
-    query_terms = query.split() 
-    modified_query = ''
-    for term in query_terms:
-        match = vocab[0]
-        min_dst = nltk.edit_distance(term, match)
-        for i in range(1, len(vocab)):
-            dst = nltk.edit_distance(term, vocab[i])
-            if  dst < min_dst:
-                min_dst = dst
-                match = vocab[i]
-        modified_query += match + ' '
-    
-    return modified_query
-
-
-def query_to_vector(query, inv_index, N):
-    terms = query.split(" ")
-    vector = {}
-    for term in terms:
-        if term not in inv_index:
-            vector[term] = 0
-        else:
-            df = len(inv_index[term])
-            idf = math.log(N / df)
-            vector[term] = idf
-    return vector
-
-def cos_similarity(query_vector, tfidf_index, corpus):
-    scores = {}
-    for i in range(len(corpus)):
-        scores[i] = 0
-    for term in query_vector:
-        for (doc, score) in tfidf_index[term]:
-            print("term: ", tfidf_index[term])
-            scores[doc] += score * query_vector[term]
-    for doc in scores.keys():
-        scores[doc] = scores[doc] / len(corpus[doc])
-
-    return sorted(scores.items(), key=lambda x: x[1], reverse=True)
-
-# a= spelling_correction("quezy")
-# print(a)
 

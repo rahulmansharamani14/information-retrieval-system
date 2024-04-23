@@ -52,27 +52,22 @@ def index():
 
 @app.route("/search", methods = ['POST'])
 def result():
-    index = load_index('../Indexer/inverted_index.pickle')
-    corpus, urls = load_corpus_file('../indexer/corpus.txt'), load_urls('../Indexer/urls.txt')
     
-    # K = 10
-
+    index = load_index('../Indexer/inverted_index.pickle')
+    corpus= load_corpus_file('../indexer/corpus.txt')
+    
     search = request.get_json()['query']
     K = request.get_json()['top_k']
 
     # search = spelling_correction(search)[:-1]
     query = modify_query(search, get_vocab(index))[:-1]
-
-    print("query", query)
-
     vector = query_to_vector(query, index, len(corpus))
-
-    print("vector", vector)
-
     matches = cos_similarity(vector, index, corpus)
 
-    print(query)
-    print(matches[:K])
+    print("query", query)
+    print("vector", vector)
+    print("matches: ", matches[:K])
+    
     top_k = matches[:K]
 
     results = []
@@ -80,9 +75,10 @@ def result():
     for i in range(len(top_k)):
         # results += urls[matches[i][0]] + '\n'
         doc = {
-            'url': urls[top_k[i][0]],
+            # 'url': urls[top_k[i][0]],
             'score': top_k[i][1],
             'docId': top_k[i][0],
+            # 'content': corpus[top_k[i][0]]
         }
         results.append(doc)
     return jsonify(results)

@@ -69,6 +69,7 @@ def cos_similarity(query_vector, tfidf_index, corpus):
         scores[i] = 0
     for term in query_vector:
         for (doc, score) in tfidf_index[term]:
+            print("term: ", tfidf_index[term])
             scores[doc] += score * query_vector[term]
     for doc in scores.keys():
         scores[doc] = scores[doc] / len(corpus[doc])
@@ -77,3 +78,4 @@ def cos_similarity(query_vector, tfidf_index, corpus):
 
 # a= spelling_correction("quezy")
 # print(a)
+

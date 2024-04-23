@@ -28,7 +28,7 @@ def handle_query(query, top_k=5):
     return top_k_urls
 
 # Example usage
-query = 'uefa champions league fixtures'
+query = 'Son Heung-min'
 top_k_urls = handle_query(query, top_k=5)
 
 print("\n\n\n")

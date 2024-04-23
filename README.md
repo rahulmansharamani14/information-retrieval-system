@@ -52,53 +52,76 @@ Running the Indexer
 From the project root, execute:
 
 ```BASH
-python indexer/index.py
+cd Indexer
+python indexer/inverted_index.py
 ```
 Query Processor
 
 Start the Flask server:
 
 ```bash
-cd processor
+cd Processor
 python main.py
 ```
 
-scrapy>=2.11
-flask>=2.2
-scikit-learn>=1.2.0
-pandas>=1.4.0
 
+Web Search Endpoint
+```code
+POST /search
 
-<!-- # Information Retrieval Project
+Body: 
 
-# This repository contains the codebase for an Information Retrieval project. The project includes three components: a web crawler, an indexer, and a query processor. Each component serves a specific purpose in the overall information retrieval pipeline.
+- query: string
+- top_k: number
 
-# ## Project Structure
+```
 
-# - `crawler/`: Contains the Scrapy-based crawler for downloading web documents in HTML format.
-# - `indexer/`: Contains the Scikit-Learn-based indexer for constructing an inverted index and handling TF-IDF representation.
-# - `processor/`: Contains the Flask-based processor for handling free text queries and returning top-K ranked results.
+### Example Test Query
 
-# ## Project Codebase
+```json
+{
+    "query": "serie league", 
+    "top_k": 6
+}
+```
 
-# ### Crawler
+### Example Test Query Response
 
-# - The Scrapy-based crawler downloads web documents in HTML format from a seed URL, following specific depth and page count limits.
-# - Data is stored in a JSON file containing the title, content, and URL of each crawled document.
+```json
+[
+    {
+        "Id": "56",
+        "score": 0.11516222795273667,
+        "title": "United States soccer league system"
+    },
+    {
+        "Id": "16",
+        "score": 0.07186884314724615,
+        "title": "Major League Soccer"
+    },
+    {
+        "Id": "75",
+        "score": 0.051735155684219915,
+        "title": "FA Cup"
+    },
+    {
+        "Id": "3",
+        "score": 0.05133822130268852,
+        "title": "United States Soccer Federation"
+    },
+    {
+        "Id": "24",
+        "score": 0.04886188751537362,
+        "title": "Rugby football"
+    },
+    {
+        "Id": "40",
+        "score": 0.037023597815022444,
+        "title": "National Basketball Association"
+    }
+]
+```
 
-# ### Indexer
+### Architecture
 
-# - The indexer constructs an inverted index using TF-IDF representation and cosine similarity.
-# - Documents are transformed into TF-IDF vectors and stored for future retrieval.
-# - The indexer also saves the vectorizer and URLs for use in query processing.
-
-# ### Processor
-
-# - The Flask-based processor handles free text queries submitted via HTTP POST requests.
-# - Queries are transformed into TF-IDF vectors and compared against the document vectors to calculate similarity scores.
-# - The processor returns top-K ranked URLs as a JSON response based on query similarity.
-
-# ## How to Set Up the Project
-
-# ### 1. Clone the Repository:
- -->
+![img a](./Screenshot%202024-04-22%20at%2011.58.23 PM.png)
